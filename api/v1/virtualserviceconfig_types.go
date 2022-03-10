@@ -28,8 +28,11 @@ type VirtualServiceConfigSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 
-	// Foo is an example field of VirtualServiceConfig. Edit virtualserviceconfig_types.go to remove/update
-	Foo string `json:"foo,omitempty"`
+	// +kubebuilder:validation:Required
+	VirtualServiceName string `json:"virtualServiceName,omitempty"`
+
+	// +kubebuilder:validation:Required
+	Host string `json:"host,omitempty"`
 }
 
 // VirtualServiceConfigStatus defines the observed state of VirtualServiceConfig
