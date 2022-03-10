@@ -1,0 +1,6 @@
+apiVersion: extension.networking.istio.io/v1
+kind: VirtualServiceConfig
+metadata:
+  name: virtualserviceconfig-sample
+spec:
+  # TODO(user): Add fields here

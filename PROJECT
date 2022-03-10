@@ -1,0 +1,16 @@
+domain: networking.istio.io
+layout:
+- go.kubebuilder.io/v3
+projectName: virtual-service-go
+repo: virtual-service-go
+resources:
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: networking.istio.io
+  group: extension
+  kind: VirtualServiceConfig
+  path: virtual-service-go/api/v1
+  version: v1
+version: "3"
