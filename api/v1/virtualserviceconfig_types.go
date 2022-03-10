@@ -29,16 +29,72 @@ type VirtualServiceConfigSpec struct {
 	// Important: Run "make" to regenerate code after modifying this file
 
 	// +kubebuilder:validation:Required
-	VirtualServiceName string `json:"virtualServiceName,omitempty"`
+	VirtualServiceName string `json:"virtualServiceName"`
 
 	// +kubebuilder:validation:Required
-	Host string `json:"host,omitempty"`
+	Host string `json:"host"`
+
+	// +kubebuilder:validation:Required
+	Http []HttpRoute `json:"http"`
+}
+
+type HttpRoute struct {
+
+	// +nullable
+	Name string `json:"name,omitempty"`
+
+	// +nullable
+	// +kubebuilder:validation:Optional
+	// +kubebuilder:default=0
+	// +kubebuilder:validation:ExclusiveMinimum=false
+	// +kubebuilder:validation:Minimum=0
+	// +kubebuilder:validation:ExclusiveMaximum=false
+	// +kubebuilder:validation:Maximum=9999
+	Order int32 `json:"order,omitempty"`
+
+	// +kubebuilder:validation:Required
+	Match HttpMatchRequest `json:"match"`
+
+	// +kubebuilder:validation:Required
+	Route HttpRouteDestination `json:"route"`
+}
+
+type HttpMatchRequest struct {
+
+	// +nullable
+	Name string `json:"name,omitempty"`
+
+	// +kubebuilder:validation:Required
+	Uri StringMatch `json:"uri"`
+
+	// +kubebuilder:validation:Optional
+	Headers map[string]StringMatch `json:"headers"`
+}
+
+type HttpRouteDestination struct {
+
+	// +kubebuilder:validation:Required
+	Host string `json:"host"`
+
+	// +nullable
+	Subset string `json:"subset,omitempty"`
+}
+
+type StringMatch struct {
+	Exact string `json:"exact,omitempty"`
+
+	Prefix string `json:"prefix,omitempty"`
+
+	Regex string `json:"regex,omitempty"`
 }
 
 // VirtualServiceConfigStatus defines the observed state of VirtualServiceConfig
 type VirtualServiceConfigStatus struct {
 	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
+
+	// +kubebuilder:validation:Required
+	Status string `json:"status,omitempty"`
 }
 
 //+kubebuilder:object:root=true
