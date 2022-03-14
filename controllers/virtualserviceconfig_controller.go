@@ -19,6 +19,7 @@ package controllers
 import (
 	"context"
 	"fmt"
+	"sort"
 
 	"github.com/go-logr/logr"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -190,6 +191,29 @@ func configsToVirtualService(virtualServiceName string, namespace string, host s
 	}
 
 	// Sort spechttps
+	sort.SliceStable(specHttps, func(a, b int) bool {
+
+		// Sort by order desc first
+		if specHttps[a].Order > specHttps[b].Order {
+			return true
+		}
+
+		// Then by uri len desc
+		uriLenA := len(stringMatchToMap(specHttps[a].Match.Uri))
+		uriLenB := len(stringMatchToMap(specHttps[b].Match.Uri))
+		if specHttps[a].Order == specHttps[b].Order && uriLenA > uriLenB {
+			return true
+		}
+
+		// Then by header count desc
+		headerCountA := len(specHttps[a].Match.Headers)
+		headerCountB := len(specHttps[b].Match.Headers)
+		if specHttps[a].Order == specHttps[b].Order && uriLenA == uriLenB && headerCountA > headerCountB {
+			return true
+		}
+
+		return false
+	})
 
 	for _, specHttp := range specHttps {
 		http := Http{
