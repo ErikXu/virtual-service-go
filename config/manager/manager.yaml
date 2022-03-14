@@ -31,7 +31,7 @@ spec:
         - /manager
         args:
         - --leader-elect
-        image: controller:latest
+        image: vs-conf-operator:1.0.0
         name: manager
         securityContext:
           allowPrivilegeEscalation: false
