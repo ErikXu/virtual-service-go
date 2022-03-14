@@ -29,3 +29,15 @@ An operator to deal with the priority of istio virtual service by watching the v
   - With your cluster `kubeconfig`, running `kubectl apply -k default/` to install operator
   
   If you are using your own docker registry, please modify the image info of [manager.yaml](config/manager/manager.yaml) before running `kubectl apply -k default/`.
+
+## Examples
+
+- Enter the [example](example) directory
+
+- Using `kubectl apply -f xxx.yaml` to easily start an example
+
+- Using `kubectl get vs xxx -o yaml` to see the generated virtual service
+
+- Using `kubectl get vsc` to see the virtual service config(s)
+
+- Using `kubectl delete -f xxx.yaml` to cleanup the example
