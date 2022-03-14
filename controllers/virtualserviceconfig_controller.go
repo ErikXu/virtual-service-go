@@ -298,7 +298,7 @@ func applyVirtualService(ctx context.Context, log logr.Logger, virtualService Vi
 		log.Error(err, "Marshal failed")
 	}
 
-	utd, err := client.Resource(gvr).Namespace("default").Patch(ctx, virtualService.Metadata.Name, types.ApplyPatchType, body, metav1.PatchOptions{FieldManager: "application/apply-patch"})
+	utd, err := client.Resource(gvr).Namespace(virtualService.Metadata.Namespace).Patch(ctx, virtualService.Metadata.Name, types.ApplyPatchType, body, metav1.PatchOptions{FieldManager: "application/apply-patch"})
 	if err != nil {
 		log.Error(err, "Apply failed")
 	}
