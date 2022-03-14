@@ -99,6 +99,7 @@ type VirtualServiceConfigStatus struct {
 
 //+kubebuilder:object:root=true
 //+kubebuilder:subresource:status
+//+kubebuilder:resource:shortName=vsc
 
 // VirtualServiceConfig is the Schema for the virtualserviceconfigs API
 type VirtualServiceConfig struct {

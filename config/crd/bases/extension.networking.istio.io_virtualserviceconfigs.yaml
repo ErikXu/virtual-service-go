@@ -1,0 +1,123 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.8.0
+  creationTimestamp: null
+  name: virtualserviceconfigs.extension.networking.istio.io
+spec:
+  group: extension.networking.istio.io
+  names:
+    kind: VirtualServiceConfig
+    listKind: VirtualServiceConfigList
+    plural: virtualserviceconfigs
+    shortNames:
+    - vsc
+    singular: virtualserviceconfig
+  scope: Namespaced
+  versions:
+  - name: v1
+    schema:
+      openAPIV3Schema:
+        description: VirtualServiceConfig is the Schema for the virtualserviceconfigs
+          API
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: VirtualServiceConfigSpec defines the desired state of VirtualServiceConfig
+            properties:
+              host:
+                type: string
+              http:
+                items:
+                  properties:
+                    match:
+                      properties:
+                        headers:
+                          additionalProperties:
+                            properties:
+                              exact:
+                                type: string
+                              prefix:
+                                type: string
+                              regex:
+                                type: string
+                            type: object
+                          type: object
+                        name:
+                          nullable: true
+                          type: string
+                        uri:
+                          properties:
+                            exact:
+                              type: string
+                            prefix:
+                              type: string
+                            regex:
+                              type: string
+                          type: object
+                      required:
+                      - uri
+                      type: object
+                    name:
+                      nullable: true
+                      type: string
+                    order:
+                      default: 0
+                      format: int32
+                      maximum: 9999
+                      minimum: 0
+                      nullable: true
+                      type: integer
+                    route:
+                      properties:
+                        host:
+                          type: string
+                        subset:
+                          nullable: true
+                          type: string
+                      required:
+                      - host
+                      type: object
+                  required:
+                  - match
+                  - route
+                  type: object
+                type: array
+              virtualServiceName:
+                type: string
+            required:
+            - host
+            - http
+            - virtualServiceName
+            type: object
+          status:
+            description: VirtualServiceConfigStatus defines the observed state of
+              VirtualServiceConfig
+            properties:
+              status:
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []
