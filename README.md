@@ -19,3 +19,13 @@ An operator to deal with the priority of istio virtual service by watching the v
 - Pack docker image
   
   Using `bash pack.sh` to pack the docker image, If you want to push the image to your docker registry, please modify the [pack.sh](pack.sh) and using your registry address before running `bash pack.sh`.
+
+- Install crd and operator
+
+  - Enter the [config](config) directory
+
+  - With your cluster `kubeconfig`, running `kubectl apply -k crd/` to install crd
+
+  - With your cluster `kubeconfig`, running `kubectl apply -k default/` to install operator
+  
+  If you are using your own docker registry, please modify the image info of [manager.yaml](config/manager/manager.yaml) before running `kubectl apply -k default/`.
