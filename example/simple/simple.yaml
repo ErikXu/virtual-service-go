@@ -1,0 +1,78 @@
+apiVersion: extension.networking.istio.io/v1
+kind: VirtualServiceConfig
+metadata:
+  name: simple
+spec:
+  virtualServiceName: simple
+  # host: simple.example.com
+  host: simple
+  http:
+  - name: simple
+    match:
+      uri:
+        prefix: /
+    route:
+      host: simple
+      subset: latest
+
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: simple
+spec:
+  host: simple
+  trafficPolicy:
+    loadBalancer:
+      simple: ROUND_ROBIN
+  subsets:
+  - name: latest
+    labels:
+      version: latest
+    trafficPolicy:
+      loadBalancer:
+        simple: ROUND_ROBIN
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: simple
+    service: simple
+  name: simple
+spec:
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: 80
+  selector:
+    app: simple
+  type: ClusterIP
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: simple
+    version: latest
+  name: simple
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: simple
+      version: latest
+  template:
+    metadata:
+      labels:
+        app: simple
+        version: latest
+    spec:
+      containers:
+        - image: kennethreitz/httpbin
+          imagePullPolicy: Always
+          name: simple
+      restartPolicy: Always

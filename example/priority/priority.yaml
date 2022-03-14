@@ -1,0 +1,58 @@
+apiVersion: extension.networking.istio.io/v1
+kind: VirtualServiceConfig
+metadata:
+  name: short-no-header
+spec:
+  virtualServiceName: priority
+  # host: priority.example.com
+  host: priority
+  http:
+  - name: short-no-header
+    order: 3
+    match:
+      uri:
+        prefix: /
+    route:
+      host: priority
+      subset: short-no-header
+
+---
+apiVersion: extension.networking.istio.io/v1
+kind: VirtualServiceConfig
+metadata:
+  name: long-no-header
+spec:
+  virtualServiceName: priority
+  # host: priority.example.com
+  host: priority
+  http:
+  - name: long-no-header
+    order: 2
+    match:
+      uri:
+        prefix: /long
+    route:
+      host: priority
+      subset: long-no-header
+
+---
+apiVersion: extension.networking.istio.io/v1
+kind: VirtualServiceConfig
+metadata:
+  name: long-with-header
+spec:
+  virtualServiceName: priority
+  # host: priority.example.com
+  host: priority
+  http:
+  - name: long-with-header
+    order: 1
+    match:
+      uri:
+        prefix: /long
+      headers:
+        version:
+          exact: "b"
+    route:
+      host: priority
+      subset: long-with-header

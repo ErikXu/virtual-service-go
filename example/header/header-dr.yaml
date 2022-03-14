@@ -1,0 +1,208 @@
+apiVersion: extension.networking.istio.io/v1
+kind: VirtualServiceConfig
+metadata:
+  name: header-dr-base
+spec:
+  virtualServiceName: header-dr
+  # host: header-dr.example.com
+  host: header-dr
+  http:
+  - name: header-dr
+    match:
+      uri:
+        prefix: /
+    route:
+      host: header-dr
+      subset: base
+
+---
+apiVersion: extension.networking.istio.io/v1
+kind: VirtualServiceConfig
+metadata:
+  name: header-dr-a
+spec:
+  virtualServiceName: header-dr
+  # host: header-dr.example.com
+  host: header-dr  
+  http:
+  - name: header-a
+    match:
+      uri:
+        prefix: /
+      headers:
+        version:
+          exact: "a"
+    route:
+      host: header-dr
+      subset: a
+
+---
+apiVersion: extension.networking.istio.io/v1
+kind: VirtualServiceConfig
+metadata:
+  name: header-dr-b
+spec:
+  virtualServiceName: header-dr
+  # host: header-dr.example.com
+  host: header-dr  
+  http:
+  - name: header-b
+    match:
+      uri:
+        prefix: /
+      headers:
+        version:
+          exact: "b"
+    route:
+      host: header-dr
+      subset: b
+
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: header-dr
+spec:
+  host: header-dr
+  trafficPolicy:
+    loadBalancer:
+      simple: ROUND_ROBIN
+  subsets:
+  - name: base
+    labels:
+      version: base
+    trafficPolicy:
+      loadBalancer:
+        simple: ROUND_ROBIN
+
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: header-dr-a
+spec:
+  host: header-dr
+  trafficPolicy:
+    loadBalancer:
+      simple: ROUND_ROBIN
+  subsets:
+  - name: a
+    labels:
+      version: a
+    trafficPolicy:
+      loadBalancer:
+        simple: ROUND_ROBIN
+
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: header-dr-b
+spec:
+  host: header-dr
+  trafficPolicy:
+    loadBalancer:
+      simple: ROUND_ROBIN
+  subsets:
+  - name: b
+    labels:
+      version: b
+    trafficPolicy:
+      loadBalancer:
+        simple: ROUND_ROBIN
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: header-dr
+    service: header-dr
+  name: header-dr
+spec:
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: 80
+  selector:
+    app: header-dr
+  type: ClusterIP
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: header-dr
+    version: base
+  name: header-dr
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: header-dr
+      version: base
+  template:
+    metadata:
+      labels:
+        app: header-dr
+        version: base
+    spec:
+      containers:
+        - image: kennethreitz/httpbin
+          imagePullPolicy: Always
+          name: header-dr
+      restartPolicy: Always
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: header-dr
+    version: a
+  name: header-dr-a
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: header-dr
+      version: a
+  template:
+    metadata:
+      labels:
+        app: header-dr
+        version: a
+    spec:
+      containers:
+        - image: kennethreitz/httpbin
+          imagePullPolicy: Always
+          name: header-dr
+      restartPolicy: Always
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: header-dr
+    version: b
+  name: header-dr-b
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: header-dr
+      version: b
+  template:
+    metadata:
+      labels:
+        app: header-dr
+        version: b
+    spec:
+      containers:
+        - image: kennethreitz/httpbin
+          imagePullPolicy: Always
+          name: header-dr
+      restartPolicy: Always

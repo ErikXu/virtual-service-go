@@ -1,0 +1,34 @@
+apiVersion: extension.networking.istio.io/v1
+kind: VirtualServiceConfig
+metadata:
+  name: uri-short
+spec:
+  virtualServiceName: uri
+  # host: uri.example.com
+  host: uri
+  http:
+  - name: short
+    match:
+      uri:
+        prefix: /
+    route:
+      host: short
+      subset: latest
+
+---
+apiVersion: extension.networking.istio.io/v1
+kind: VirtualServiceConfig
+metadata:
+  name: uri-long
+spec:
+  virtualServiceName: uri
+  # host: uri.example.com
+  host: uri
+  http:
+  - name: long
+    match:
+      uri:
+        prefix: /long
+    route:
+      host: long
+      subset: latest

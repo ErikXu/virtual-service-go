@@ -1,0 +1,244 @@
+apiVersion: extension.networking.istio.io/v1
+kind: VirtualServiceConfig
+metadata:
+  name: header-svc
+spec:
+  virtualServiceName: header-svc
+  # host: header-svc.example.com
+  host: header-svc
+  http:
+  - name: header-svc
+    match:
+      uri:
+        prefix: /
+    route:
+      host: header-svc
+      subset: latest
+
+---
+apiVersion: extension.networking.istio.io/v1
+kind: VirtualServiceConfig
+metadata:
+  name: header-svc-a
+spec:
+  virtualServiceName: header-svc
+  # host: header-svc.example.com
+  host: header-svc
+  http:
+  - name: header-a
+    match:
+      uri:
+        prefix: /
+      headers:
+        version:
+          exact: "a"
+    route:
+      host: header-svc-a
+      subset: latest
+
+---
+apiVersion: extension.networking.istio.io/v1
+kind: VirtualServiceConfig
+metadata:
+  name: header-svc-b
+spec:
+  virtualServiceName: header-svc
+  # host: header-svc.example.com
+  host: header-svc
+  http:
+  - name: header-b
+    match:
+      uri:
+        prefix: /
+      headers:
+        version:
+          exact: "b"
+    route:
+      host: header-svc-b
+      subset: latest
+
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: header-svc
+spec:
+  host: header-svc
+  trafficPolicy:
+    loadBalancer:
+      simple: ROUND_ROBIN
+  subsets:
+  - name: latest
+    labels:
+      version: latest
+    trafficPolicy:
+      loadBalancer:
+        simple: ROUND_ROBIN
+
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: header-svc-a
+spec:
+  host: header-svc-a
+  trafficPolicy:
+    loadBalancer:
+      simple: ROUND_ROBIN
+  subsets:
+  - name: latest
+    labels:
+      version: latest
+    trafficPolicy:
+      loadBalancer:
+        simple: ROUND_ROBIN
+
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: header-svc-b
+spec:
+  host: header-svc-b
+  trafficPolicy:
+    loadBalancer:
+      simple: ROUND_ROBIN
+  subsets:
+  - name: latest
+    labels:
+      version: latest
+    trafficPolicy:
+      loadBalancer:
+        simple: ROUND_ROBIN
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: header-svc
+    service: header-svc
+  name: header-svc
+spec:
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: 80
+  selector:
+    app: header-svc
+  type: ClusterIP
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: header-svc-a
+    service: header-svc-a
+  name: header-svc-a
+spec:
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: 80
+  selector:
+    app: header-svc-a
+  type: ClusterIP
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: header-svc-b
+    service: header-svc-b
+  name: header-svc-b
+spec:
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: 80
+  selector:
+    app: header-svc-b
+  type: ClusterIP
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: header-svc
+    version: latest
+  name: header-svc
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: header-svc
+      version: latest
+  template:
+    metadata:
+      labels:
+        app: header-svc
+        version: latest
+    spec:
+      containers:
+        - image: kennethreitz/httpbin
+          imagePullPolicy: Always
+          name: header-svc
+      restartPolicy: Always
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: header-svc-a
+    version: latest
+  name: header-svc-a
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: header-svc-a
+      version: latest
+  template:
+    metadata:
+      labels:
+        app: header-svc-a
+        version: latest
+    spec:
+      containers:
+        - image: kennethreitz/httpbin
+          imagePullPolicy: Always
+          name: header-svc
+      restartPolicy: Always
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: header-svc-b
+    version: latest
+  name: header-svc-b
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: header-svc-b
+      version: latest
+  template:
+    metadata:
+      labels:
+        app: header-svc-b
+        version: latest
+    spec:
+      containers:
+        - image: kennethreitz/httpbin
+          imagePullPolicy: Always
+          name: header-svc
+      restartPolicy: Always
