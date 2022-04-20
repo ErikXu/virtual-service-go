@@ -16,6 +16,10 @@ An operator to deal with the priority of istio virtual service by watching the v
 
 ## Installation
 
+- Gen or re-gen crd
+
+  Using `make manifests` to gen or re-gen crd.
+
 - Pack docker image
   
   Using `bash pack.sh` to pack the docker image, If you want to push the image to your docker registry, please modify the [pack.sh](pack.sh) and using your registry address before running `bash pack.sh`.
